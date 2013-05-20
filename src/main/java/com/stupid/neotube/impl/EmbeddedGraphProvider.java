@@ -7,7 +7,7 @@ import javax.inject.Provider;
 
 public class EmbeddedGraphProvider implements Provider<GraphDatabaseService> {
 	
-	private static final String DB_PATH = "node4j.file";
+	private static final String DB_PATH = "neo4j.file";
 
 	public GraphDatabaseService get() {
 		final GraphDatabaseService result = new GraphDatabaseFactory().newEmbeddedDatabase(DB_PATH);

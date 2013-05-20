@@ -12,10 +12,11 @@ import com.stupid.neotube.api.TransportSystem;
 
 public class Neo4JTransportSystem implements TransportSystem {
 	
-	private GraphDatabaseService graphDB;
-
+	private final GraphDatabaseService graphDB;
+	
 	@Inject
-	public void setGraphDB(GraphDatabaseService graphDB) {
+	public Neo4JTransportSystem(GraphDatabaseService graphDB) {
+		super();
 		this.graphDB = graphDB;
 	}
 
