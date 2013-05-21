@@ -2,3 +2,4 @@ target
 .classpath
 .project
 .settings
+neo4j.files
