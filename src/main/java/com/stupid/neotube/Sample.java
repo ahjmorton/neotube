@@ -7,7 +7,8 @@ import com.google.inject.Injector;
 import com.stupid.neotube.api.Point;
 import com.stupid.neotube.api.Route;
 import com.stupid.neotube.api.TransportSystem;
-import com.stupid.neotube.impl.Neo4JTubeModule;
+import com.stupid.neotube.impl.modules.Neo4JModule;
+import com.stupid.neotube.impl.modules.Neo4JTransportSystemModule;
 
 public class Sample {
 	
@@ -39,7 +40,7 @@ public class Sample {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		final Injector injector = Guice.createInjector(new Neo4JTubeModule());
+		final Injector injector = Guice.createInjector(new Neo4JModule(), new Neo4JTransportSystemModule());
 		final TransportSystem system = injector
 				.getInstance(TransportSystem.class);
 		final Sample sample = new Sample(system);
