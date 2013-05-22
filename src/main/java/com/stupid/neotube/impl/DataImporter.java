@@ -28,6 +28,7 @@ public class DataImporter {
 		from.createRelationshipTo(to, Transport.LINK);
 	}
 
+	@SuppressWarnings("deprecation")
 	private void performImport() {
 		final Transaction trans = graphDb.beginTx();
 		try {
