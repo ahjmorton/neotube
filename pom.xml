@@ -11,7 +11,7 @@
 		<junit.version>4.11</junit.version>
 		<guice.version>3.0</guice.version>
 		<neo4j.version>1.9</neo4j.version>
-
+		<guava.version>14.0.1</guava.version>
 		<java.version>1.6</java.version>
 		
 		<compiler-plugin-version>3.1</compiler-plugin-version>
@@ -40,6 +40,12 @@
 			<artifactId>guice</artifactId>
 			<version>${guice.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

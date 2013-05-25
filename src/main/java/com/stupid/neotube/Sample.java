@@ -2,6 +2,7 @@ package com.stupid.neotube;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.stupid.neotube.api.Point;
@@ -20,7 +21,7 @@ public class Sample {
 	}
 
 	public void runTest() {
-		final List<Point> allPoints = system.getAllPoints();
+		final List<Point> allPoints = Lists.newArrayList(system.getAllPoints());
 		final int numOfPoints = allPoints.size();
 		final Point start = allPoints.get((int) (numOfPoints * Math.random()));
 		final Point end = allPoints.get((int) (numOfPoints * Math.random()));

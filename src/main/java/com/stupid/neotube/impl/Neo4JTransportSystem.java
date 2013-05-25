@@ -32,7 +32,7 @@ public class Neo4JTransportSystem implements TransportSystem {
 	}
 
 	@Override
-	public List<Route> getRoutes(Point start, Point end) {
+	public Iterable<Route> getRoutes(Point start, Point end) {
 		final Node startNode = graphDB.getNodeById(start.getNodeId());
 		final Node endNode = graphDB.getNodeById(end.getNodeId());
 		final List<Route> routes = new ArrayList<Route>();
@@ -52,7 +52,7 @@ public class Neo4JTransportSystem implements TransportSystem {
 	}
 
 	@Override
-	public List<Point> getAllPoints() {
+	public Iterable<Point> getAllPoints() {
 		final List<Point> result = new ArrayList<Point>();
 		for (Node pointObject : globalOps.getAllNodes()) {
 			result.add(makePoint(pointObject));
