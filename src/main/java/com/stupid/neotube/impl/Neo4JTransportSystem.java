@@ -1,6 +1,7 @@
 package com.stupid.neotube.impl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -30,20 +31,48 @@ public class Neo4JTransportSystem implements TransportSystem {
 		this.globalOps = globalOps;
 		this.routeFinder = routeFinder;
 	}
+	
+	private static class PathToRouteIterator implements Iterator<Route>, Iterable<Route>{
+		
+		private final Iterator<Path> pathIter;
+		
+		private PathToRouteIterator(Iterator<Path> pathIter) {
+			this.pathIter = pathIter;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return pathIter.hasNext();
+		}
+
+		@Override
+		public Route next() {
+			final Path path = pathIter.next();
+			final List<Point> points = new ArrayList<Point>();
+			for (Node node : path.nodes()) {
+				points.add(makePoint(node));
+			}
+			return new Route(points);
+		}
+
+		@Override
+		public void remove() {
+			pathIter.remove();
+			
+		}
+
+		@Override
+		public Iterator<Route> iterator() {
+			return this;
+		}
+		
+	}
 
 	@Override
 	public Iterable<Route> getRoutes(Point start, Point end) {
 		final Node startNode = graphDB.getNodeById(start.getNodeId());
 		final Node endNode = graphDB.getNodeById(end.getNodeId());
-		final List<Route> routes = new ArrayList<Route>();
-		for (Path path : routeFinder.findAllPaths(startNode, endNode)) {
-			final List<Point> points = new ArrayList<Point>();
-			for (Node node : path.nodes()) {
-				points.add(makePoint(node));
-			}
-			routes.add(new Route(points));
-		}
-		return routes;
+		return new PathToRouteIterator(routeFinder.findAllPaths(startNode, endNode).iterator());
 	}
 
 	private static Point makePoint(Node pointObject) {
