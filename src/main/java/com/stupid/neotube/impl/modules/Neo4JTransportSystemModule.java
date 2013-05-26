@@ -11,7 +11,7 @@ public class Neo4JTransportSystemModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-		bind(new TypeLiteral<PathFinder<Path> >(){}).toProvider(AllPathRouteProvider.class);
+		bind(new TypeLiteral<PathFinder<Path> >(){}).toProvider(PathFinderProvider.class);
 		
 		bind(TransportSystem.class).to(Neo4JTransportSystem.class);
 		

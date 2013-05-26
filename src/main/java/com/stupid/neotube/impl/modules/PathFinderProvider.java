@@ -10,11 +10,11 @@ import org.neo4j.kernel.Traversal;
 
 import com.stupid.neotube.impl.Transport;
 
-public class AllPathRouteProvider implements Provider<PathFinder<Path> >{
+public class PathFinderProvider implements Provider<PathFinder<Path> >{
 
 	@Override
 	public PathFinder<Path> get() {
-		return GraphAlgoFactory.allPaths(Traversal.pathExpanderForTypes(Transport.LINK, Direction.BOTH), Integer.MAX_VALUE);
+		return GraphAlgoFactory.shortestPath(Traversal.pathExpanderForTypes(Transport.LINK, Direction.BOTH), 100, 10);
 	}
 
 }
