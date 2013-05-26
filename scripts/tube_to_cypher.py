@@ -27,6 +27,8 @@ class Route(object) :
         self.start = start
         self.end = end
 
+def escape(astr) :
+    return astr.replace("'", "\\\\'")
 
 def stations(path="stations.csv") :
     result = {}
@@ -34,7 +36,7 @@ def stations(path="stations.csv") :
         reader = csv.DictReader(stations_file)
         for row in reader :
             result[row["id"]] = \
-                Station(row["name"],
+                Station(escape(row["name"]),
                         float(row["longitude"]),
                         float(row["latitude"]))
     return result
@@ -59,6 +61,10 @@ def routes(stations, lines, path="routes.csv") :
             result.append(Route(line, start, end))
     return result
 
+PREFIX_LINES = [
+     "START n=node(0) DELETE n;"
+]
+
 CYP_STATION_FORMAT = "CREATE (x {{name:'{name}', lat:{latitude:f}, long:{longitude:f}}});" 
 CYP_LINK_FORMAT = "START starts=node(*), ends=node(*) WHERE starts.name='{startName}' AND ends.name='{endName}' CREATE starts-[r:LINK {{name:'{linkName}'}}]->ends;"
 
@@ -68,6 +74,7 @@ def to_cypher(routes) :
         stations.add(route.start)
         stations.add(route.end)
     lines = []
+    lines.extend(PREFIX_LINES)
     for station in stations :
         lines.append(CYP_STATION_FORMAT.format(name=station.name, latitude=station.lat, longitude=station.long))
     for route in routes :
