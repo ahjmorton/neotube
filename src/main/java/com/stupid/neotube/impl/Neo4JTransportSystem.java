@@ -12,6 +12,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Path;
 import org.neo4j.tooling.GlobalGraphOperations;
 
+import com.google.common.collect.Iterators;
 import com.stupid.neotube.api.Point;
 import com.stupid.neotube.api.Route;
 import com.stupid.neotube.api.TransportSystem;
@@ -31,11 +32,29 @@ public class Neo4JTransportSystem implements TransportSystem {
 		this.globalOps = globalOps;
 		this.routeFinder = routeFinder;
 	}
-	
-	private static class PathToRouteIterator implements Iterator<Route>, Iterable<Route>{
-		
+
+	private static Point makePoint(Node pointObject) {
+		return new Point(pointObject.getId(),
+				(String) pointObject.getProperty(NodePropertyNames.POINT_NAME));
+	}
+
+	private static Route makeRoute(Path pathObject) {
+		final List<Point> points = new ArrayList<Point>();
+		for (Node node : pathObject.nodes()) {
+			points.add(makePoint(node));
+		}
+		return new Route(points);
+	}
+
+	private static class PathToRouteIterator implements Iterator<Route>,
+			Iterable<Route> {
+
 		private final Iterator<Path> pathIter;
-		
+
+		private PathToRouteIterator(Path path) {
+			this(Iterators.singletonIterator(path));
+		}
+
 		private PathToRouteIterator(Iterator<Path> pathIter) {
 			this.pathIter = pathIter;
 		}
@@ -47,37 +66,28 @@ public class Neo4JTransportSystem implements TransportSystem {
 
 		@Override
 		public Route next() {
-			final Path path = pathIter.next();
-			final List<Point> points = new ArrayList<Point>();
-			for (Node node : path.nodes()) {
-				points.add(makePoint(node));
-			}
-			return new Route(points);
+			return makeRoute(pathIter.next());
 		}
 
 		@Override
 		public void remove() {
 			pathIter.remove();
-			
+
 		}
 
 		@Override
 		public Iterator<Route> iterator() {
 			return this;
 		}
-		
+
 	}
 
 	@Override
 	public Iterable<Route> getRoutes(Point start, Point end) {
 		final Node startNode = graphDB.getNodeById(start.getNodeId());
 		final Node endNode = graphDB.getNodeById(end.getNodeId());
-		return new PathToRouteIterator(routeFinder.findAllPaths(startNode, endNode).iterator());
-	}
-
-	private static Point makePoint(Node pointObject) {
-		return new Point(pointObject.getId(),
-				(String) pointObject.getProperty(NodePropertyNames.POINT_NAME));
+		return new PathToRouteIterator(routeFinder.findAllPaths(startNode,
+				endNode).iterator());
 	}
 
 	@Override
@@ -88,6 +98,14 @@ public class Neo4JTransportSystem implements TransportSystem {
 
 		}
 		return result;
+	}
+
+	@Override
+	public Route getFastestRoute(Point start, Point end) {
+		final Node startNode = graphDB.getNodeById(start.getNodeId());
+		final Node endNode = graphDB.getNodeById(end.getNodeId());
+		return makeRoute(routeFinder.findSinglePath(startNode, endNode));
+
 	}
 
 }
