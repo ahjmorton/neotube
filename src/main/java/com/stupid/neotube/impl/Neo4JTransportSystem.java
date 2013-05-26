@@ -12,7 +12,6 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Path;
 import org.neo4j.tooling.GlobalGraphOperations;
 
-import com.google.common.collect.Iterators;
 import com.stupid.neotube.api.Point;
 import com.stupid.neotube.api.Route;
 import com.stupid.neotube.api.TransportSystem;
@@ -22,11 +21,11 @@ public class Neo4JTransportSystem implements TransportSystem {
 
 	private final GraphDatabaseService graphDB;
 	private final GlobalGraphOperations globalOps;
-	private final PathFinder<Path> routeFinder;
+	private final PathFinder<? extends Path> routeFinder;
 
 	@Inject
 	public Neo4JTransportSystem(@ReadOnlyGraph GraphDatabaseService graphDB,
-			GlobalGraphOperations globalOps, PathFinder<Path> routeFinder) {
+			GlobalGraphOperations globalOps, PathFinder<? extends Path> routeFinder) {
 		super();
 		this.graphDB = graphDB;
 		this.globalOps = globalOps;
@@ -49,13 +48,9 @@ public class Neo4JTransportSystem implements TransportSystem {
 	private static class PathToRouteIterator implements Iterator<Route>,
 			Iterable<Route> {
 
-		private final Iterator<Path> pathIter;
+		private final Iterator<? extends Path> pathIter;
 
-		private PathToRouteIterator(Path path) {
-			this(Iterators.singletonIterator(path));
-		}
-
-		private PathToRouteIterator(Iterator<Path> pathIter) {
+		private PathToRouteIterator(Iterator<? extends Path> pathIter) {
 			this.pathIter = pathIter;
 		}
 
